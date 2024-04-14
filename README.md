@@ -31,9 +31,9 @@ fn main() {
         a: 123,
         b: "ajo".to_string(),
         c: MySubStruct { sub_d: 456},
-    }
+    };
 
     let serialized = serde_libconfig::to_string(&my_struct).unwrap();
-    println!("libconfig serialized: {}", serialized);
+    println!("libconfig serialized:\n{}", serialized);
 }
 ```
