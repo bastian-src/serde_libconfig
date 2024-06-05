@@ -1,6 +1,6 @@
 [package]
 name = "serde_libconfig"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2021"
 authors = ["Bastian Schmidt <basti@schmidt-electronics.de>"]
 categories = ["encoding", "parser-implementations", "no-std"]
