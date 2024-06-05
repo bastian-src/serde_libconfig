@@ -7,19 +7,19 @@ It's basically the official [serde json example](https://serde.rs/data-format.ht
 changes to make it serialize into libconfig format. I'm planning on adding the Deserializer
 too.
 
-So, you're welcome to make PRs, leave comments, and just give me hints on how to do things better.
+So, you're welcome to make PRs, leave comments, or just give me hints on how to do things better.
 
 ## Usage
 
 ```
-use serde::{Deserialize, Serialize};
+use serde::{Serialize};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Debug)]
 struct MySubStruct {
     sub_d: u16,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Debug)]
 struct MyStruct {
     a: u16,
     b: String,
@@ -31,7 +31,7 @@ fn main() {
         a: 123,
         b: "ajo".to_string(),
         c: MySubStruct { sub_d: 456},
-    }
+    };
 
     let serialized = serde_libconfig::to_string(&my_struct).unwrap();
     println!("libconfig serialized: {}", serialized);
