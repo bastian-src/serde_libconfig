@@ -45,32 +45,36 @@ impl<'a> ser::Serializer for &'a mut Serializer {
     }
 
     fn serialize_i16(self, v: i16) -> Result<()> {
-        self.serialize_i64(i64::from(v))
+        self.serialize_i32(i32::from(v))
     }
 
     fn serialize_i32(self, v: i32) -> Result<()> {
-        self.serialize_i64(i64::from(v))
-    }
-
-    fn serialize_i64(self, v: i64) -> Result<()> {
         self.output += &v.to_string();
         Ok(())
     }
 
+    fn serialize_i64(self, v: i64) -> Result<()> {
+        self.output += &v.to_string();
+        self.output += "L";
+        Ok(())
+    }
+
     fn serialize_u8(self, v: u8) -> Result<()> {
-        self.serialize_u64(u64::from(v))
+        self.serialize_u32(u32::from(v))
     }
 
     fn serialize_u16(self, v: u16) -> Result<()> {
-        self.serialize_u64(u64::from(v))
+        self.serialize_u32(u32::from(v))
     }
 
     fn serialize_u32(self, v: u32) -> Result<()> {
-        self.serialize_u64(u64::from(v))
+        self.output += &v.to_string();
+        Ok(())
     }
 
     fn serialize_u64(self, v: u64) -> Result<()> {
         self.output += &v.to_string();
+        self.output += "UL";
         Ok(())
     }
 
@@ -468,6 +472,21 @@ mod tests {
     }
 
     #[derive(Debug, Serialize)]
+    struct TestU64 {
+        my_u64: u64,
+    }
+
+    #[derive(Debug, Serialize)]
+    struct TestI16 {
+        my_i16: i16,
+    }
+
+    #[derive(Debug, Serialize)]
+    struct TestI64 {
+        my_i64: i64,
+    }
+
+    #[derive(Debug, Serialize)]
     struct TestStr {
         my_str: String,
     }
@@ -482,6 +501,7 @@ mod tests {
     struct TestStruct {
         my_u16: u16,
     }
+
     #[derive(Debug, Serialize)]
     struct TestNestedStruct {
         nested_struct: TestStruct,
@@ -509,10 +529,31 @@ mod tests {
     }
 
     #[test]
+    fn test_ser_struct_i16() {
+        let dummy_struct = TestI16 { my_i16: 16 };
+        let ser_str = to_string(&dummy_struct).unwrap();
+        assert_eq!(ser_str, "my_i16 = 16;");
+    }
+
+    #[test]
+    fn test_ser_struct_i64() {
+        let dummy_struct = TestI64 { my_i64: 16 };
+        let ser_str = to_string(&dummy_struct).unwrap();
+        assert_eq!(ser_str, "my_i64 = 16L;");
+    }
+
+    #[test]
     fn test_ser_struct_u16() {
         let dummy_struct = TestU16 { my_u16: 16 };
         let ser_str = to_string(&dummy_struct).unwrap();
         assert_eq!(ser_str, "my_u16 = 16;");
+    }
+
+    #[test]
+    fn test_ser_struct_u64() {
+        let dummy_struct = TestU64 { my_u64: 16 };
+        let ser_str = to_string(&dummy_struct).unwrap();
+        assert_eq!(ser_str, "my_u64 = 16UL;");
     }
 
     #[test]
@@ -559,9 +600,9 @@ mod tests {
 nested_struct = {
     my_u16 = 16;
     your_str = "my nice schtring";
-    they_u64 = 2863311530;
+    they_u64 = 2863311530UL;
 };
-they_u64 = 4294967295;"#;
+they_u64 = 4294967295UL;"#;
         assert_eq!(ser_str, exp_str);
     }
 }
